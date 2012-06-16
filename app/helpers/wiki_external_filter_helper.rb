@@ -4,11 +4,11 @@ module WikiExternalFilterHelper
 
   def load_config
     unless @config
-      config_file = "#{RAILS_ROOT}/config/wiki_external_filter.yml"
+      config_file = "#{Rails.root}/config/wiki_external_filter.yml"
       unless File.exists?(config_file)
         raise "Config not found: #{config_file}"
       end
-      @config = YAML.load_file(config_file)[RAILS_ENV]
+      @config = YAML.load_file(config_file)[Rails.env]
     end
     @config
   end
@@ -43,23 +43,23 @@ module WikiExternalFilterHelper
       begin
         content = read_fragment cache_key, :expires_in => expires.seconds
       rescue
-        RAILS_DEFAULT_LOGGER.error "Failed to load cache: #{cache_key}, error: $!"
+        Rails.logger.error "Failed to load cache: #{cache_key}, error: $!"
       end
     end
 
     if content
       result[:source] = text
       result[:content] = content
-      RAILS_DEFAULT_LOGGER.debug "from cache: #{cache_key}"
+      Rails.logger.debug "from cache: #{cache_key}"
     else
       result = self.build_forced(text, attachments, info)
       if result[:status]
         if expires > 0
           begin
             write_fragment cache_key, result[:content], :expires_in => expires.seconds
-            RAILS_DEFAULT_LOGGER.debug "cache saved: #{cache_key}"
+            Rails.logger.debug "cache saved: #{cache_key}"
           rescue
-            RAILS_DEFAULT_LOGGER.error "Failed to save cache: #{cache_key}, error: $!"
+            Rails.logger.error "Failed to save cache: #{cache_key}, error: $!"
 	  end
 	end
       else
@@ -88,7 +88,7 @@ module WikiExternalFilterHelper
     errors = ""
 
     info['outputs'].each do |out|
-      RAILS_DEFAULT_LOGGER.info "executing command: #{out['command']}"
+      Rails.logger.info "executing command: #{out['command']}"
 
       c = nil
       e = nil
@@ -115,13 +115,13 @@ module WikiExternalFilterHelper
 	}
       end
 
-      RAILS_DEFAULT_LOGGER.debug("child status: sig=#{$?.termsig}, exit=#{$?.exitstatus}")
+      Rails.logger.debug("child status: sig=#{$?.termsig}, exit=#{$?.exitstatus}")
 
       content << c
       errors += e if e
     end
 
-    result[:content] = content
+    result[:content] = content[0]
     result[:errors] = errors
     result[:source] = text
     result[:status] = $?.exitstatus == 0

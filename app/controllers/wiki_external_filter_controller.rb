@@ -12,8 +12,8 @@ class WikiExternalFilterController < ApplicationController
     cache_key = self.construct_cache_key(macro, name)
     content = read_fragment cache_key
 
-    if (content)
-      send_data content[index], :type => config[macro]['outputs'][index]['content_type'], :disposition => 'inline', :filename => filename
+    if content
+      send_data content, :type => config[macro]['outputs'][index]['content_type'], :disposition => 'inline', :filename => filename
     else
       render_404
     end

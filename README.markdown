@@ -3,6 +3,13 @@
               Copyright (C) 2010 Alexander Tsvyashchenko,
               http://www.ndl.kiev.ua - see COPYRIGHT.txt
 
+Attention
+========
+This is a fork of the original plugin. It adds support for Redmine higher than 2.0.
+The plugin is **tested** **only** on **plantuml** and **graphviz**, other functionality
+might not work.
+
+
 Overview
 ========
 
